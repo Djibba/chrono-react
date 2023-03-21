@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect, useReducer} from "react";
 import PauseImg from '../Images/pause.svg'
 import PlayImg from '../Images/play.svg'
 import ResetImg from '../Images/reset.svg'
@@ -13,6 +13,40 @@ function Chrono () {
     const [breakTimeFixed, setBreakTimeFixed] = useState(300)
 
     const [workingChrono, setWorkingChrono] = useState(false)
+
+    const playPause = () => {
+        setWorkingChrono(!workingChrono)
+    }
+
+    function reducer (state, action) {
+        switch (action.type) {
+            case 'TICK':
+                if(sessionTime >= 0){
+                    setSessionTime(sessionTime - 1 )
+                } else if(breakTime >= 0){
+                    setBreakTime(breakTime - 1 )
+                }else if(sessionTime <= 0 && breakTime <= 0){
+                    setSessionTime(sessionTimeFixed)
+                    setBreakTime(breakTimeFixed)
+                }
+        }
+    }
+
+    const [state, dispatch] = useReducer(reducer)
+
+    console.log(sessionTime)
+    useEffect(() => {
+        let id;
+        if(workingChrono){
+            id = window.setInterval(() => {
+                dispatch({ type: 'TICK'})
+            }, 1000)
+        }
+        return () => {
+            window.clearInterval(id)
+        }
+    }, [workingChrono])
+
 
     return (
         <div className='container-chrono'>
@@ -33,11 +67,17 @@ function Chrono () {
             </div>
             
             <h1>
-                <span>CHRONO</span>
+                {sessionTime >= 0 ? (
+                    <span>
+                        {`${Math.trunc(sessionTime / 60)} : ${sessionTime % 60 < 10 ? `0${sessionTime % 60}` : `${sessionTime % 60}`}`}
+                    </span>
+                ) : '' }
             </h1>
 
             <div className="container-controllers">
-                <button>
+                <button
+                    onClick={playPause}
+                >
                     <img src={workingChrono ? PauseImg : PlayImg } alt='' />
                 </button>
                 <button>
