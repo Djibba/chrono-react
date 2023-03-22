@@ -77,7 +77,7 @@ function Chrono () {
     }
 
     return (
-        <div className='container-chrono'>
+        <div className={workingChrono ? 'container-chrono anim-glow' : 'container-chrono'}>
             <div className="container-config">
 
                 <div className="box-btns session">
