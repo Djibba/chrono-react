@@ -14,16 +14,13 @@ function Chrono () {
 
     const [workingChrono, setWorkingChrono] = useState(false)
 
-    const playPause = () => {
-        setWorkingChrono(!workingChrono)
-    }
-
+    const [state, dispatch] = useReducer(reducer)
     function reducer (state, action) {
         switch (action.type) {
             case 'TICK':
                 if(sessionTime >= 0){
                     setSessionTime(sessionTime - 1 )
-                } else if(breakTime >= 0){
+                } else if(breakTime >= 1){
                     setBreakTime(breakTime - 1 )
                 }else if(sessionTime <= 0 && breakTime <= 0){
                     setSessionTime(sessionTimeFixed)
@@ -32,9 +29,6 @@ function Chrono () {
         }
     }
 
-    const [state, dispatch] = useReducer(reducer)
-
-    console.log(sessionTime)
     useEffect(() => {
         let id;
         if(workingChrono){
@@ -47,21 +41,47 @@ function Chrono () {
         }
     }, [workingChrono])
 
+    const playPause = () => {
+        setWorkingChrono(!workingChrono)
+    }
+
+    const handleSession = (e) => {
+        let el = e.target
+        if (el.classList.contains('minus')){
+            setSessionTime(sessionTime - 60)
+            setSessionTimeFixed(sessionTimeFixed - 60)
+        } else if (el.classList.contains('plus')){
+            setSessionTime(sessionTime + 60)
+            setSessionTimeFixed(sessionTimeFixed + 60)
+        }
+    }
+
+    const handleBreak = (e) => {
+        let el = e.target
+        if (el.classList.contains('minus')) {
+            setBreakTime(breakTime - 60)
+            setBreakTimeFixed(breakTimeFixed - 60)
+        } else if (el.classList.contains('plus')) {
+            setBreakTime(breakTime + 60)
+            setBreakTimeFixed(breakTimeFixed + 60)
+
+        }
+    }
 
     return (
         <div className='container-chrono'>
             <div className="container-config">
 
                 <div className="box-btns session">
-                    <button className='minus'>-</button>
-                    <span>{sessionTime / 60}</span>
-                    <button className="plus">+</button>
+                    <button className='minus' onClick={handleSession}>-</button>
+                    <span>{sessionTimeFixed / 60}</span>
+                    <button className="plus" onClick={handleSession}>+</button>
                 </div>
 
                 <div className="box-btns break">
-                    <button className="minus">-</button>
-                    <span>{breakTime / 60}</span>
-                    <button className="plus">+</button>
+                    <button className="minus" onClick={handleBreak}>-</button>
+                    <span>{breakTimeFixed / 60}</span>
+                    <button className="plus" onClick={handleBreak}>+</button>
                 </div>
 
             </div>
@@ -71,7 +91,11 @@ function Chrono () {
                     <span>
                         {`${Math.trunc(sessionTime / 60)} : ${sessionTime % 60 < 10 ? `0${sessionTime % 60}` : `${sessionTime % 60}`}`}
                     </span>
-                ) : '' }
+                ) :
+                    <span>
+                        {`${Math.trunc(breakTime / 60)} : ${breakTime % 60 < 10 ? `0${breakTime % 60}` : `${breakTime % 60}`}`}
+                    </span>
+                }
             </h1>
 
             <div className="container-controllers">
