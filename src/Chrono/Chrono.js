@@ -68,6 +68,14 @@ function Chrono () {
         }
     }
 
+    const resetFunc = () => {
+        if(workingChrono){
+            setWorkingChrono(!workingChrono)
+        }
+        setSessionTime(sessionTimeFixed)
+        setBreakTime(breakTimeFixed)
+    }
+
     return (
         <div className='container-chrono'>
             <div className="container-config">
@@ -104,7 +112,7 @@ function Chrono () {
                 >
                     <img src={workingChrono ? PauseImg : PlayImg } alt='' />
                 </button>
-                <button>
+                <button onClick={resetFunc}>
                     <img src={ResetImg} alt=""/>
                 </button>
             </div>
